@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Applications — Portail IAM SODEPA{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root{--navy:#0A1828;--teal:#178582;--gold:#BFA181;--bg:#f2f5f9;--white:#ffffff;--text:#1a2940;--muted:#6b7a99;--border:#e4e9f2;--sidebar-w:240px;--topbar-h:60px;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  svg{display:block;}
+
+  .sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:100;overflow:hidden;}
+  .sidebar-brand{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .sidebar-brand h1{font-size:.85rem;font-weight:700;color:#fff;letter-spacing:.04em;text-transform:uppercase;line-height:1.3;display:flex;align-items:flex-start;gap:8px;}
+  .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);flex-shrink:0;margin-top:3px;}
+  .sidebar-nav{flex:1;padding:16px 0;overflow-y:auto;}
+  .nav-section-label{font-size:.65rem;font-weight:500;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;padding:12px 20px 6px;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.875rem;font-weight:400;transition:all .2s;border-left:3px solid transparent;}
+  .nav-item:hover{color:#fff;background:rgba(255,255,255,.06);border-left-color:rgba(23,133,130,.5);}
+  .nav-item.active{color:#fff;background:rgba(23,133,130,.15);border-left-color:var(--teal);font-weight:500;}
+  .nav-icon{width:18px;height:18px;opacity:.8;flex-shrink:0;}
+  .sidebar-user{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0d5e5b);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0;}
+  .user-info{flex:1;overflow:hidden;}
+  .user-name{font-size:.8rem;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .user-email{font-size:.7rem;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .logout-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);padding:4px;border-radius:6px;display:flex;align-items:center;transition:color .2s;}
+  .logout-btn:hover{color:#ef4444;}
+
+  .main-wrapper{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column;}
+  .topbar{height:var(--topbar-h);background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+  .topbar-title{font-size:1rem;font-weight:600;color:var(--navy);flex:1;letter-spacing:-.01em;}
+  .role-badge{background:linear-gradient(135deg,var(--gold),#a8895e);color:var(--navy);font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;}
+  .topbar-actions{display:flex;align-items:center;gap:10px;}
+  .content{flex:1;padding:28px;}
+
+  .alert-iam{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#059669;}
+  .alert-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#dc2626;}
+
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+  .page-title{font-size:1.25rem;font-weight:700;color:var(--navy);}
+  .page-subtitle{font-size:.82rem;color:var(--muted);margin-top:2px;}
+
+  .section-label{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;margin-top:24px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  .section-label:first-child{margin-top:0;}
+
+  .apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:8px;}
+
+  .app-card{background:var(--white);border-radius:14px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(10,24,40,.05);overflow:hidden;transition:box-shadow .25s,transform .25s;display:flex;flex-direction:column;}
+  .app-card:hover{box-shadow:0 6px 24px rgba(10,24,40,.1);transform:translateY(-3px);}
+
+  .app-card-header{padding:20px 20px 16px;display:flex;align-items:flex-start;gap:14px;}
+  .app-logo-lg{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+  .app-card-info{flex:1;}
+  .app-card-name{font-size:1rem;font-weight:600;color:var(--navy);}
+  .app-card-desc{font-size:.8rem;color:var(--muted);margin-top:3px;line-height:1.4;}
+  .app-status-badge{font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
+  .status-ok{background:#e8f8f0;color:#1a8a45;}
+
+  .app-card-meta{padding:0 20px 16px;border-bottom:1px solid var(--border);}
+  .meta-row{display:flex;align-items:center;gap:8px;font-size:.77rem;color:var(--muted);margin-top:6px;}
+  .meta-val{font-family:'Roboto Mono',monospace;font-size:.73rem;}
+
+  .roles-list{display:flex;flex-wrap:wrap;gap:5px;padding:12px 20px;}
+  .role-tag{font-size:.68rem;background:rgba(23,133,130,.08);color:var(--teal);padding:2px 8px;border-radius:4px;font-weight:500;font-family:'Roboto Mono',monospace;}
+
+  .app-card-footer{padding:14px 20px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--border);}
+  .btn-primary{flex:1;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .2s;text-decoration:none;text-align:center;display:block;font-family:'Roboto',sans-serif;}
+  .btn-primary:hover{background:#0f6b69;color:#fff;}
+  .sso-pill{font-size:.65rem;font-weight:700;background:rgba(23,133,130,.1);color:var(--teal);padding:4px 10px;border-radius:20px;border:1px solid rgba(23,133,130,.2);letter-spacing:.04em;}
+
+  .empty-state{text-align:center;padding:80px 20px;color:var(--muted);}
+  .empty-state-icon{font-size:3rem;opacity:.3;margin-bottom:16px;}
+</style>
+{% endblock %}
+
+{% block content %}
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <h1><span class="brand-dot"></span>Portail IAM<br>SODEPA</h1>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+    <a class="nav-item" href="{% url 'dashboard' %}">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item active" href="{% url 'launcher' %}">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm2 1h10v6H5V6z" clip-rule="evenodd"/><path d="M8 16h4v1H8z"/></svg>
+      Applications
+    </a>
+    {% if is_admin or is_manager %}
+    <div class="nav-section-label">Administration</div>
+    <a class="nav-item" href="{% url 'user_list' %}">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+      Utilisateurs
+    </a>
+    {% endif %}
+    {% if is_admin or is_auditor %}
+    <a class="nav-item" href="{% url 'audit_dashboard' %}">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+      Audit
+    </a>
+    {% endif %}
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar">{{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}</div>
+    <div class="user-info">
+      <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+      <div class="user-email">{{ request.user.email }}</div>
+    </div>
+    <form method="post" action="{% url 'oidc_logout' %}" style="margin:0;">
+      {% csrf_token %}
+      <button type="submit" class="logout-btn" title="Déconnexion">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h9a1 1 0 100-2H4V5h8a1 1 0 100-2H3zm10.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L14.586 11H7a1 1 0 110-2h7.586l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </form>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <header class="topbar">
+    <span class="topbar-title">Applications SSO</span>
+    <div class="topbar-actions">
+      {% for r in user_roles %}<span class="role-badge">{{ r }}</span>{% endfor %}
+    </div>
+  </header>
+
+  <main class="content">
+    {% for message in messages %}
+    <div class="alert-iam {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">{{ message }}</div>
+    {% endfor %}
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Applications accessibles</div>
+        <div class="page-subtitle">{{ apps|length }} application{{ apps|length|pluralize }} disponible{{ apps|length|pluralize }} via SSO Keycloak</div>
+      </div>
+    </div>
+
+    {% if categories %}
+      {% for category, cat_apps in categories.items %}
+      <div class="section-label">{{ category }}</div>
+      <div class="apps-grid">
+        {% for app in cat_apps %}
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-logo-lg" style="background:{{ app.color }}18;">{{ app.icon }}</div>
+            <div class="app-card-info">
+              <div class="app-card-name">{{ app.name }}</div>
+              <div class="app-card-desc">{{ app.description }}</div>
+            </div>
+            <span class="app-status-badge status-ok">Actif</span>
+          </div>
+          <div class="app-card-meta">
+            <div class="meta-row">
+              <svg width="12" height="12" viewBox="0 0 20 20" fill="var(--muted)"><path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/></svg>
+              URL : <span class="meta-val">{{ app.url|truncatechars:36 }}</span>
+            </div>
+          </div>
+          <div class="roles-list">
+            {% for role in app.roles %}<span class="role-tag">{{ role }}</span>{% endfor %}
+          </div>
+          <div class="app-card-footer">
+            <a href="{% url 'app_launch' app.id %}" class="btn-primary">Accéder →</a>
+            {% if app.sso %}<span class="sso-pill">SSO</span>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">🔒</div>
+      <p>Aucune application disponible pour votre rôle.</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

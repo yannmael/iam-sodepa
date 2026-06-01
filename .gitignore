@@ -1,0 +1,40 @@
+# Environnement virtuel
+.venv/
+venv/
+env/
+
+# Fichiers sensibles
+.env
+*.env
+
+# Base de données locale
+db.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.Python
+
+# Django
+staticfiles/
+media/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dossier de référence (non nécessaire en prod)
+files/
+iam-portal-skill/

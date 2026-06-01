@@ -646,5 +646,5 @@ python manage.py collectstatic --noinput
 
 ## Auteur
 
-Développé pour la **SODEPA** — Direction des Systèmes d'Information  
+Développé pour la **KAPTUE KEMGNE Yann Mael**  
 Dépôt : [github.com/yannmael/iam-sodepa](https://github.com/yannmael/iam-sodepa)
